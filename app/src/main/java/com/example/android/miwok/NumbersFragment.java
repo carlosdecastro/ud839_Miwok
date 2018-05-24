@@ -1,37 +1,34 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.example.android.miwok;
 
+
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 
-public class NumbersActivity extends AppCompatActivity {
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class NumbersFragment extends Fragment {
 
     private MediaPlayer mMediaPlayer;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
+    public NumbersFragment() {
+        // Required empty public constructor
+    }
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         ArrayList<Word> words = new ArrayList<Word>();
 
         words.add(new Word("one", "lutti", R.drawable.number_one, R.raw.number_one));
@@ -45,8 +42,11 @@ public class NumbersActivity extends AppCompatActivity {
         words.add(new Word("nine", "wo’e", R.drawable.number_nine, R.raw.number_nine));
         words.add(new Word("ten", "na’aacha", R.drawable.number_ten, R.raw.number_ten));
 
-        final WordAdapter adapter = new WordAdapter(this, words, R.color.category_numbers);
-        ListView listView = (ListView) findViewById(R.id.list);
+        final WordAdapter adapter = new WordAdapter(getActivity(), words, R.color.category_numbers);
+
+        View rootView = inflater.inflate(R.layout.word_list, container, false);
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
+
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -55,7 +55,7 @@ public class NumbersActivity extends AppCompatActivity {
 
                 Word currentWord = (Word) adapterView.getItemAtPosition(i);
                 releaseMediaPlayer();
-                mMediaPlayer = MediaPlayer.create(NumbersActivity.this, currentWord.getAudioResourceId());
+                mMediaPlayer = MediaPlayer.create(getContext(), currentWord.getAudioResourceId());
                 mMediaPlayer.start();
 
                 mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -66,10 +66,11 @@ public class NumbersActivity extends AppCompatActivity {
                 });
             }
         });
+        return rootView;
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         releaseMediaPlayer();
     }
@@ -90,5 +91,6 @@ public class NumbersActivity extends AppCompatActivity {
             mMediaPlayer = null;
         }
     }
-}
 
+
+}
